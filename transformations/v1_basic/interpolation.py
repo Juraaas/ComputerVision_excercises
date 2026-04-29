@@ -36,3 +36,13 @@ def bilinear(img, src_i, src_j):
     )
 
     return np.clip(pixel, 0, 255).astype(np.uint8)
+
+
+def nearest(img, src_i, src_j):
+    h, w, c = img.shape
+    src_i = round(src_i)
+    src_j = round(src_j)
+
+    src_i = max(0, min(src_i, h-1))
+    src_j = max(0, min(src_j, w-1))
+    return img[src_i, src_j]

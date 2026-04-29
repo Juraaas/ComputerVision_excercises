@@ -37,10 +37,10 @@ def compute_output_shape(M, w, h):
     x_max = max(xs)
     y_min = min(ys)
     y_max = max(ys)
-    width = int(x_max - x_min)
-    height = int(y_max - y_min)
+    width = int(x_max - x_min) + 1
+    height = int(y_max - y_min) + 1
     shift_x = -x_min
     shift_y = -y_min
     T_shift = translate_mat(shift_x, shift_y)
     M_final = T_shift @ M
-    return (width, height, 3), M_final
+    return (height, width, 3), M_final
