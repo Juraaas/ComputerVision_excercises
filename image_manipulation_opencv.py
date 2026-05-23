@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 from IPython.display import Image
 from PIL import Image
 
-test = cv2.imread("checkerboard.jpg", 0)
-img_bgr= cv2.imread("landscape.jpg", cv2.IMREAD_COLOR)
+test = cv2.imread("images/checkerboard.jpg", 0)
+img_bgr= cv2.imread("images/landscape.jpg", cv2.IMREAD_COLOR)
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
 print(test.shape)
 plt.imshow(test, cmap="gray")
@@ -169,3 +170,158 @@ cv2.putText(image_text, text, (0, 420), font_face,
             font_scale, font_color, font_thickness, cv2.LINE_AA)
 plt.imshow(image_text[:,:,::-1])
 plt.show()
+
+# Brightness modification
+
+matrix = np.ones(img_rgb.shape, dtype="uint8") * 50
+
+img_rgb_brighter = cv2.add(img_rgb, matrix)
+img_rgb_darker = cv2.subtract(img_rgb, matrix)
+
+plt.figure(figsize=(18,5))
+plt.subplot(131)
+plt.imshow(img_rgb_darker)
+plt.title("Darker")
+plt.subplot(132)
+plt.imshow(img_rgb)
+plt.title("Original")
+plt.subplot(133)
+plt.imshow(img_rgb_brighter)
+plt.title("Brighter")
+plt.show()
+
+# Contrast modification
+
+matrix1 = np.ones(img_rgb.shape) * 0.8
+matrix2 = np.ones(img_rgb.shape) * 1.2
+
+img_rgb_brighter = np.uint8(cv2.multiply(np.float64(img_rgb), matrix2))
+img_rgb_darker = np.uint8(cv2.multiply(np.float64(img_rgb), matrix1))
+
+plt.figure(figsize=(18,5))
+plt.subplot(131)
+plt.imshow(img_rgb_darker)
+plt.title("Lower Contrast")
+plt.subplot(132)
+plt.imshow(img_rgb)
+plt.title("Original")
+plt.subplot(133)
+plt.imshow(img_rgb_brighter)
+plt.title("Higher Contrast")
+plt.show()
+
+img_rgb_higher = np.uint8(np.clip(cv2.multiply(np.float64(img_rgb), matrix2), 0, 255))
+img_rgb_lower = np.uint8(cv2.multiply(np.float64(img_rgb), matrix1))
+
+plt.figure(figsize=(18,5))
+plt.subplot(131)
+plt.imshow(img_rgb_lower)
+plt.title("Lower Contrast")
+plt.subplot(132)
+plt.imshow(img_rgb)
+plt.title("Original")
+plt.subplot(133)
+plt.imshow(img_rgb_higher)
+plt.title("Higher Contrast")
+plt.show()
+
+# Image Thresholding
+
+img_read = cv2.imread("patrick.jpg", cv2.IMREAD_GRAYSCALE)
+retval, img_thresh = cv2.threshold(img_read, 100, 255, cv2.THRESH_BINARY)
+
+plt.figure(figsize=(18,5))
+plt.subplot(121)
+plt.imshow(img_read, cmap="gray")
+plt.title("Original")
+plt.subplot(122)
+plt.imshow(img_thresh, cmap="gray")
+plt.title("Thresholded")
+plt.show()
+
+retval, img_thresh_glob1 = cv2.threshold(img_read, 50, 255, cv2.THRESH_BINARY)
+retval, img_thresh_glob2 = cv2.threshold(img_read, 130, 255, cv2.THRESH_BINARY)
+img_thresh_adp = cv2.adaptiveThreshold(img_read, 255, cv2.ADAPTIVE_THRESH_MEAN_C, 
+                                       cv2.THRESH_BINARY, 11, 7)
+
+plt.figure(figsize=(18,15))
+plt.subplot(221)
+plt.imshow(img_read, cmap="gray")
+plt.title("Original")
+plt.subplot(222)
+plt.imshow(img_thresh_glob1, cmap="gray")
+plt.title("Thresholded (global: 50)")
+plt.subplot(223)
+plt.imshow(img_thresh_glob2, cmap="gray")
+plt.title("Thresholded (global: 130)")
+plt.subplot(224)
+plt.imshow(img_thresh_adp, cmap="gray")
+plt.title("Thresholded (adaptive)")
+plt.show()
+
+# Bitwise operations
+
+img_rec = cv2.imread("images/rectangle.jpg", cv2.IMREAD_GRAYSCALE)
+img_cir = cv2.imread("images/circle.jpg", cv2.IMREAD_GRAYSCALE)
+desired_width = 882
+desired_height = 360
+dim = (desired_width, desired_height)
+cir_res = cv2.resize(img_cir, dsize=dim, interpolation=cv2.INTER_AREA)
+plt.figure(figsize=(20,5))
+plt.subplot(121)
+plt.imshow(img_rec, cmap="gray")
+plt.subplot(122)
+plt.imshow(img_cir, cmap="gray")
+plt.show()
+result = cv2.bitwise_and(img_rec, cir_res, mask=None)
+
+plt.imshow(result, cmap="gray")
+plt.show()
+
+result = cv2.bitwise_or(img_rec, cir_res, mask=None)
+plt.imshow(result, cmap="gray")
+plt.show()
+
+result = cv2.bitwise_xor(img_rec, cir_res, mask=None)
+plt.imshow(result, cmap="gray")
+plt.show()
+
+# Application: Logo Manipulation
+
+img_bgr = cv2.imread("images/coke.jpg")
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+print(img_rgb.shape)
+logo_w = img_rgb.shape[0]
+logo_h = img_rgb.shape[1]
+
+img_background_bgr = cv2.imread("images/background.jpg")
+img_background_rgb = cv2.cvtColor(img_background_bgr, cv2.COLOR_BGR2RGB)
+
+aspect_ratio = logo_w / img_background_rgb.shape[1]
+dim = (logo_w, int(img_background_rgb.shape[0] * aspect_ratio))
+
+img_background_rgb = cv2.resize(img_background_rgb, dim, interpolation=cv2.INTER_AREA)
+
+img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+retval, img_mask = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
+
+plt.imshow(img_mask, cmap="gray")
+plt.show()
+
+img_mask_inv = cv2.bitwise_not(img_mask)
+plt.imshow(img_mask_inv, cmap="gray")
+plt.show()
+
+img_background = cv2.bitwise_and(img_background_rgb, img_background_rgb, mask=img_mask)
+plt.imshow(img_background)
+plt.show()
+
+img_foreground = cv2.bitwise_and(img_rgb, img_rgb, mask=img_mask_inv)
+plt.imshow(img_foreground)
+plt.show()
+
+# Merge foreground and background
+result = cv2.add(img_background, img_foreground)
+plt.imshow(result)
+plt.show()
+cv2.imwrite("logo_final.png", result[:,:,::-1])
