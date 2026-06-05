@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Step 1: Capture multiple exposures 
 
-def readImagesAndTimes():
+def read_images_and_times():
     filenames = ["img_0.033.jpg", "img_0.25.jpg", "img_2.5.jpg", "img_15.jpg"]
     times = np.array([1 / 30.0, 0.25, 2.5, 15.0], dtype=np.float32)
 
@@ -18,7 +18,7 @@ def readImagesAndTimes():
 
 # Step 2: Align images
 
-images, times = readImagesAndTimes()
+images, times = read_images_and_times()
 
 alignMTB = cv2.createAlignMTB() # Median threshold bitmap
 alignMTB.process(images, images)

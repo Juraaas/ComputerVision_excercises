@@ -10,21 +10,21 @@ from base64 import b64encode
 
 video_input_file = "race_car.mp4"
 
-def drawRectangle(frame, bbox):
+def draw_rectangle(frame, bbox):
     p1 = (int(bbox[0]), int(bbox[1]))
     p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
     cv2.rectangle(frame, p1, p2, (255,0,0), 2, 1)
 
-def displayRectangle(frame, bbox):
+def display_rectangle(frame, bbox):
     plt.figure(figsize=(20,10))
     frameCopy = frame.copy()
-    drawRectangle(frameCopy, bbox)
+    draw_rectangle(frameCopy, bbox)
     frameCopy = cv2.cvtColor(frameCopy, cv2.COLOR_RGB2BGR)
     plt.imshow(frameCopy)
     plt.axis("off")
     plt.show()
 
-def drawText(frame, txt, location, color=(50,170,50)):
+def draw_text(frame, txt, location, color=(50,170,50)):
     cv2.putText(frame, txt, location, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
 
 
@@ -73,7 +73,7 @@ video_out = cv2.VideoWriter(video_output_file, cv2.VideoWriter_fourcc(*'avc1'), 
 
 
 bbox = (1300, 405, 160, 120)
-#displayRectangle(frame, bbox)
+#display_rectangle(frame, bbox)
 
 ok = tracker.init(frame, bbox)
 
@@ -87,12 +87,12 @@ while True:
     fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
 
     if ok:
-        drawRectangle(frame, bbox)
+        draw_rectangle(frame, bbox)
     else:
-        drawText(frame, "Tracking failure detected", (80,140), (0,0,255))
+        draw_text(frame, "Tracking failure detected", (80,140), (0,0,255))
 
-    drawText(frame, tracker_type + "Tracker", (80,60))
-    drawText(frame, "FPS : " + str(int(fps)), (80, 100))
+    draw_text(frame, tracker_type + "Tracker", (80,60))
+    draw_text(frame, "FPS : " + str(int(fps)), (80, 100))
 
     video_out.write(frame)
 
