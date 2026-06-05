@@ -5,7 +5,7 @@ import math
 import glob
 import os
 
-'''im1 = cv2.imread("form.jpg", cv2.IMREAD_COLOR)
+im1 = cv2.imread("form.jpg", cv2.IMREAD_COLOR)
 im1 = cv2.cvtColor(im1, cv2.COLOR_BGR2RGB)
 
 im2 = cv2.imread("scanned-form.jpg", cv2.IMREAD_COLOR)
@@ -82,7 +82,7 @@ plt.subplot(122)
 plt.imshow(im2_reg)
 plt.axis('off')
 plt.title("Scanned form")
-plt.show()'''
+plt.show()
 
 ## Panorama
 
